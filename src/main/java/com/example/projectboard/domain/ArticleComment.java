@@ -17,6 +17,7 @@ import java.util.Objects;
 
 @Entity
 public class ArticleComment extends AuditingFields {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +28,8 @@ public class ArticleComment extends AuditingFields {
 
     @Setter
     @ManyToOne(optional = false)
-    private UserAccount userAccount;
+    @JoinColumn(name = "userId")
+    private UserAccount userAccount; // 유저 정보 (ID)
 
     @Setter
     @Column(nullable = false, length = 500)
@@ -50,7 +52,7 @@ public class ArticleComment extends AuditingFields {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ArticleComment that)) return false;
-        return id != null && id.equals(that.id);
+        return id != null && id.equals(that.getId());
     }
 
     @Override

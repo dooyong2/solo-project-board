@@ -27,7 +27,8 @@ public class Article extends AuditingFields {
 
     @Setter
     @ManyToOne(optional = false)
-    private UserAccount userAccount; // 유저 정보(ID)
+    @JoinColumn(name = "userId")
+    private UserAccount userAccount; // 유저 정보 (ID)
 
     @Setter
     @Column(nullable = false)
@@ -63,8 +64,8 @@ public class Article extends AuditingFields {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Article article)) return false;
-        return id != null && id.equals(article.id);
+        if (!(o instanceof Article that)) return false;
+        return id != null && id.equals(that.getId());
     }
 
     @Override
