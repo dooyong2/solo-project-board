@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ class ArticleServiceTest {
 
     @InjectMocks private ArticleService sut;
     @Mock private ArticleRepository articleRepository;
+    @Mock private UserAccountRepository userAccountRepository;
 
     @Mock private UserAccountRepository userAccountRepository;
 
@@ -118,7 +120,7 @@ class ArticleServiceTest {
         then(articleRepository).should().findById(articleId);
     }
 
-    @DisplayName("없는 게시글을 조회하면, 예외를 던진다.")
+    @DisplayName("게시글이 없으면, 예외를 던진다.")
     @Test
     void givenNonexistentArticleId_whenSearchingArticle_thenThrowsException() {
         // Given
@@ -135,17 +137,19 @@ class ArticleServiceTest {
         then(articleRepository).should().findById(articleId);
     }
 
-    @DisplayName("게시글 정보를 입력하면, 게시글 정보를 생성한다")
+    @DisplayName("게시글 정보를 입력하면, 게시글을 생성한다")
     @Test
     void givenArticleInfo_whenSavingArticle_thenSavesArticle() {
         // Given
         ArticleDto dto = createArticleDto();
+        given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(createUserAccount());
         given(articleRepository.save(any(Article.class))).willReturn(createArticle());
 
         // When
         sut.saveArticle(dto);
 
         // Then
+        then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(articleRepository).should().save(any(Article.class));
     }
 
@@ -224,12 +228,15 @@ class ArticleServiceTest {
     }
 
     private Article createArticle() {
-        return Article.of(
+        Article article = Article.of(
                 createUserAccount(),
                 "title",
                 "content",
                 "#java"
         );
+        ReflectionTestUtils.setField(article, "id", 1L);
+
+        return article;
     }
 
     private ArticleDto createArticleDto() {
@@ -237,7 +244,8 @@ class ArticleServiceTest {
     }
 
     private ArticleDto createArticleDto(String title, String content, String hashtag) {
-        return ArticleDto.of(1L,
+        return ArticleDto.of(
+                1L,
                 createUserAccountDto(),
                 title,
                 content,
