@@ -61,11 +61,13 @@ public class Article extends AuditingFields {
         return new Article(userAccount, title, content, hashtag);
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Article that)) return false;
-        return id != null && id.equals(that.getId());
+        if (!(o instanceof Article article)) return false;
+        return id != null && id.equals(article.id);
     }
 
     @Override

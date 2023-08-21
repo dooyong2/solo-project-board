@@ -36,8 +36,6 @@ class ArticleServiceTest {
     @Mock private ArticleRepository articleRepository;
     @Mock private UserAccountRepository userAccountRepository;
 
-    @Mock private UserAccountRepository userAccountRepository;
-
 
     @DisplayName("검색어 없이 게시글을 검색하면, 게시글 페이지를 반환한다.")
     @Test
